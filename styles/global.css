@@ -1,4 +1,3 @@
-/* Responsive markdown code blocks and images */
 .markdown pre {
   max-width: 100vw;
   overflow-x: auto;
@@ -38,10 +37,31 @@ body {
 a {
   color: var(--link);
   text-decoration: none;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--link);
+  box-shadow: 0 0 8px hsl(var(--accent-hsl));
+  transition: width 0.3s ease;
 }
 
 a:hover {
   text-decoration: underline;
+  text-decoration-color: var(--link);
+  text-underline-offset: 2px;
+  text-shadow: 0 0 6px hsl(var(--accent-hsl) / 0.45);
+}
+
+a:hover::after {
+  width: 100%;
 }
 
 img {
@@ -49,7 +69,6 @@ img {
   display: block;
 }
 
-/* Underline links inside rendered markdown content */
 .markdown a {
   text-decoration: underline;
 }
@@ -58,12 +77,10 @@ img {
   text-underline-offset: 2px;
 }
 
-/* Prevent long strings from causing horizontal scroll */
 a, p, li, code {
   overflow-wrap: anywhere;
 }
 
-/* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
@@ -72,42 +89,39 @@ a, p, li, code {
   }
 }
 
-/* Theme variables */
 :root {
-  --bg: #ffffff;
-  --text: #111827; /* gray-900 */
-  --muted-text: #6b7280; /* gray-500 */
-  --border: #e5e7eb; /* gray-200 */
-  --link: #0070f3;
-  --hover-bg: rgba(0, 0, 0, 0.04);
-  /* Status colors (light) */
-  --success-text: #065f46; /* emerald-900 */
-  --success-bg: rgba(16, 185, 129, 0.12);
-  --error-text: #7f1d1d; /* red-900 */
-  --error-bg: rgba(239, 68, 68, 0.12);
-}
-
-html[data-theme='dark'] {
-  --bg: #151617; /* gray-800 */
-  --text: #e5e7eb; /* gray-200 */
-  --muted-text: #9ca3af; /* gray-400 */
-  --border: #363b43; /* gray-700 */
-  --link: var(--text); /* neutral link color in dark mode */
-  --hover-bg: rgba(255, 255, 255, 0.06);
-  /* Status colors (dark - brighter for contrast) */
-  --success-text: #34d399; /* emerald-400 */
-  --success-bg: rgba(16, 185, 129, 0.22);
-  --error-text: #f87171; /* red-400 */
-  --error-bg: rgba(239, 68, 68, 0.22);
+  --accent-hsl: 0 73.7% 41.8%;
+  --bg: #000000;
+  --text: #e5e7eb;
+  --muted-text: #9ca3af;
+  --border: #1f2937;
+  --link: hsl(var(--accent-hsl));
+  --hover-bg: hsl(var(--accent-hsl) / 0.08);
+  --success-text: #34d399;
+  --success-bg: rgba(16, 185, 129, 0.18);
+  --error-text: #ff5a7a;
+  --error-bg: rgba(255, 0, 60, 0.18);
 }
 
 body {
   background-color: var(--bg);
   color: var(--text);
   transition: background-color 0.25s ease, color 0.25s ease;
+  background-image: 
+    linear-gradient(hsl(var(--accent-hsl) / 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--accent-hsl) / 0.15) 1px, transparent 1px);
+  background-size: 25px 25px;
+  background-position: 0 0, 0 0;
+  animation: gridMove 20s linear infinite;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* Form controls inherit fonts and transition theme vars */
+@keyframes gridMove {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 25px 25px, 25px 25px; }
+}
+
 input, textarea, select {
   font: inherit;
 }
@@ -115,7 +129,6 @@ button, input, textarea, select {
   transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
-/* Contact form message box transition */
 #form-message {
   transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }

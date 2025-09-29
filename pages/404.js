@@ -1,11 +1,11 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../components/layout';
-import linksStyles from '../styles/links.module.css';
+// using plain text links styled by global.css
 
 export default function Custom404() {
   return (
-  <Layout showBackLink={false} showCountdownFooter={false}>
+  <Layout showBackLink={false}>
       <Head>
         <title>404 - Page not found</title>
         <meta name="robots" content="noindex" />
@@ -23,16 +23,11 @@ export default function Custom404() {
         <p style={{ color: 'var(--muted-text)', marginTop: '0.75rem' }}>
           Sorry, we couldn't find that page.
         </p>
-        <div style={{
-          marginTop: '1.5rem',
-          display: 'flex',
-          gap: '10px',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-        }}>
-          <Link className={linksStyles.linkButton} href="/">Go Home</Link>
-          <Link className={linksStyles.linkButton} href="/blog">View Blog</Link>
-        </div>
+        <p style={{ marginTop: '1.5rem' }}>
+          <Link href="/">Go Home</Link>
+          <span style={{ color: 'var(--muted-text)' }}> • </span>
+          <Link href="https://www.praneel.tech">View Main Page</Link>
+        </p>
       </div>
     </Layout>
   );

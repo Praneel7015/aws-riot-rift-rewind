@@ -11,20 +11,23 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 12px 16px;
-  border-radius: 10px;
+  padding: 12px 24px;
+  border-radius: 8px;
   text-align: center;
   text-decoration: none;
-  color: var(--text);
-  background: transparent;
+  color: #ffffff;
+  background: var(--link);
   font-weight: 600;
-  border: 1px solid var(--border);
-  transition: background-color 0.12s ease, transform 0.08s ease, border-color 0.15s ease;
+  border: 1px solid var(--link);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .linkButton:hover {
-  background-color: var(--hover-bg);
   transform: translateY(-1px);
+  box-shadow: 0 0 25px hsl(var(--accent-hsl) / 0.4);
+  text-decoration: none;
 }
 
 .linkButton:active {

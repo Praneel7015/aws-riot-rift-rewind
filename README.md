@@ -1,57 +1,56 @@
-# Landing + Blog (Next.js Pages Router)
+# Gaming Hub Landing Page
 
-A simple personal landing page with a blog, built on the Next.js Pages Router tutorial and customized to my liking.
+An animated, gaming-themed personal landing page built with the Next.js Pages Router. It features neon-inspired visual effects, a featured game library, and an about page—all statically generated for fast loads.
 
-### Why I made this
-- I was doing the official Next.js Pages Router Tutorial and then thought i can modify and use it, so i modified the layout, styling, and structure to fit my use (landing page, dark/light theme toggle, Linktree-style links, and a blog Page).
+## Features
+- **Immersive visuals** – CRT overlays, scanlines, and a particle network background powered by reusable React hooks.
+- **Featured game showcase** – Steam header art rendered with `next/image`, ready for quick curation.
+- **Quick navigation hub** – Prominent profile links, social icons, and a dedicated about page.
+- **Static generation by default** – Home (`/`) and About (`/about`) routes pre-rendered on build.
+- **Optional Umami analytics** – Drop in environment variables to enable privacy-friendly tracking.
 
-## How to use (fork/clone + run)
-1. Fork this repository on GitHub (or) Directly Clone the Repository.
-2. Clone the project locally:
+## Getting started
+1. **Prerequisites**
+   - Node.js ≥ 18
+   - A package manager (examples below use `pnpm`, adapt for `npm` or `yarn` if you prefer)
+2. **Clone the repository**
+   ```bash
+   git clone https://github.com/<your-username>/landing-page.git
+   cd landing-page
+   ```
+3. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+4. **Start the dev server**
+   ```bash
+   pnpm run dev
+   ```
+5. Visit [http://localhost:3000](http://localhost:3000) to explore the site.
 
-	```bash
-	git clone https://github.com/<your-username>/landing-page.git
-	cd landing-page
-	```
+### Available scripts
+| Script | Description |
+| --- | --- |
+| `pnpm run dev` | Start the Next.js development server with hot reloading. |
+| `pnpm run build` | Create an optimized production build. |
+| `pnpm start` | Launch the production server after building. |
 
-3. Install dependencies and run the dev server:
 
-	 - Node.js 18+ recommended
-	 - Install and run:
+## Customization guide
+- **Avatar & metadata** – Update `avatarSrc`, `name`, and `siteTitle` in `components/layout.js`.
+- **Hero copy & social links** – Edit the introductory text and link buttons in `pages/index.js`.
+- **Featured games** – Modify the `FEATURED_GAMES` array in `pages/index.js` with your own titles and Steam app IDs (or swap in other assets).
+- **About content** – Adjust the sections inside `pages/about.js` to reflect your story.
+- **Visual effects** – Tweak color variables in `styles/global.css` and the animations in `styles/effects.module.css`.
+- **Particle settings** – Pass custom options to `<ParticleField />` or adjust defaults in `hooks/useParticleNetwork.js`.
 
-	 ```
-	 npm install
-	 npm run dev
-	 ```
 
-4. Open http://localhost:3000
+## Deployment
+1. Build the project locally with `pnpm run build`.
+2. Deploy the `.next` output using any Node-friendly host, or import the repository into [Vercel](https://vercel.com/) for zero-config deployments.
+3. If self-hosting, run `pnpm start` on your server behind a reverse proxy.
 
-## Customize it
-- Profile image: replace `public/images/profile.jpg`.
-- Name and site title: edit `components/layout.js` (`name` and `siteTitle`).
-- Landing page intro and links: edit `pages/index.js`.
-- Favicon: replace `public/favicon.ico`.
-- Theme colors: adjust CSS variables in `styles/global.css`.
-- Blog content: add markdown files under `blog/posts/`.
-- Images in posts: put images in `public/` and reference as `![alt](/path/in/public.png)`.
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for details.
 
-### Write blog posts (Markdown)
-- Posts live as Markdown files in the `blog/posts/` folder (not `pages/posts`).
-- Each post needs front matter at the top:
-
-	```
-	---
-	title: "My Post Title"
-	date: "2025-08-15"
-	---
-
-	Your content here in Markdown.
-	```
-
-- The blog index is at `/blog`. Each markdown file becomes a post at `/blog/posts/[id]`, where `[id]` is the filename (without `.md`).
-
-### Deploy
-- Build with `npm run build` and deploy to your host of choice (I Used Vercel). Importing the repo into Vercel auto-detects Next.js.
-
-## Attribution
-- Based on the official [Next.js Pages Router Tutorial](https://nextjs.org/learn) and then customized by me.
+Inspired by the official [Next.js Pages Router tutorial](https://nextjs.org/learn) and customized for a gaming aestheeic.

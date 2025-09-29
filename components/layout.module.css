@@ -1,7 +1,7 @@
 .container {
-  max-width: 36rem;
-  padding: 0 1rem;
-  margin: 3rem auto 6rem;
+  max-width: 40rem;
+  padding: 0 1.25rem;
+  margin: 2.25rem auto 5rem;
 }
 
 .header {
@@ -10,6 +10,126 @@
   align-items: center;
 }
 
+.avatarWrap {
+  display: inline-block;
+  transition: transform 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+/* Underlayer glow effect - always present */
+.avatarWrap::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+  background: radial-gradient(circle, 
+    hsl(var(--accent-hsl) / 0.0) 60%, 
+    hsl(var(--accent-hsl) / 0.1) 70%,
+    hsl(var(--accent-hsl) / 0.2) 85%,
+    hsl(var(--accent-hsl) / 0.0) 100%);
+  border-radius: 50%;
+  opacity: 0.6;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: -2;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Main profile border with moving bright section */
+.avatarWrap::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid hsl(var(--accent-hsl) / 0.3);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    hsl(var(--accent-hsl) / 0.1) 0deg,
+    hsl(var(--accent-hsl) / 0.2) 30deg,
+    hsl(var(--accent-hsl)) 60deg,
+    hsl(var(--accent-hsl)) 90deg,
+    hsl(var(--accent-hsl) / 0.8) 120deg,
+    hsl(var(--accent-hsl) / 0.3) 150deg,
+    hsl(var(--accent-hsl) / 0.1) 180deg,
+    hsl(var(--accent-hsl) / 0.05) 210deg,
+    transparent 240deg,
+    transparent 300deg,
+    hsl(var(--accent-hsl) / 0.05) 330deg,
+    hsl(var(--accent-hsl) / 0.1) 360deg
+  );
+  mask: radial-gradient(circle, transparent 60%, black 62%, black 100%);
+  -webkit-mask: radial-gradient(circle, transparent 60%, black 62%, black 100%);
+  animation: rotateBorder 4s linear infinite;
+  z-index: -1;
+  transition: filter 0.3s ease;
+}
+
+@keyframes rotateBorder {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { 
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.avatarWrap:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.avatarWrap:hover::before {
+  opacity: 1;
+  transform: scale(1.15);
+  background: radial-gradient(circle, 
+    hsl(var(--accent-hsl) / 0.0) 50%, 
+    hsl(var(--accent-hsl) / 0.2) 60%,
+    hsl(var(--accent-hsl) / 0.4) 75%,
+    hsl(var(--accent-hsl) / 0.6) 85%,
+    hsl(var(--accent-hsl) / 0.2) 95%,
+    hsl(var(--accent-hsl) / 0.0) 100%);
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+.avatarWrap:hover::after {
+  filter: brightness(1.5) saturate(1.2);
+  animation: rotateBorder 2s linear infinite;
+  border: 3px solid hsl(var(--accent-hsl) / 0.5);
+  background: conic-gradient(
+    from 0deg,
+    hsl(var(--accent-hsl) / 0.2) 0deg,
+    hsl(var(--accent-hsl) / 0.5) 20deg,
+    hsl(var(--accent-hsl)) 40deg,
+    hsl(var(--accent-hsl)) 80deg,
+    hsl(var(--accent-hsl)) 120deg,
+    hsl(var(--accent-hsl) / 0.8) 140deg,
+    hsl(var(--accent-hsl) / 0.4) 160deg,
+    hsl(var(--accent-hsl) / 0.2) 180deg,
+    hsl(var(--accent-hsl) / 0.1) 200deg,
+    transparent 220deg,
+    transparent 280deg,
+    hsl(var(--accent-hsl) / 0.1) 300deg,
+    hsl(var(--accent-hsl) / 0.2) 340deg,
+    hsl(var(--accent-hsl) / 0.3) 360deg
+  );
+}
+
 .backToHome {
   margin: 3rem 0 0;
+}
+
+.backToHome a:hover {
+  border-color: var(--link);
+  box-shadow: 0 0 12px hsl(0 73.7% 41.8% / 0.25);
 }

@@ -3,46 +3,53 @@ import Image from 'next/image';
 import styles from './layout.module.css';
 import utilStyles from '../styles/utils.module.css';
 import Link from 'next/link';
-import ThemeToggle from './ThemeToggle';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
-const name = 'Praneel';
+const name = 'Praneel_7015';
+const avatarSrc = 'https://shared.fastly.steamstatic.com/community_assets/images/items/2021850/d5bc9154dbf8eefdf959781f5a6b733750a293f0.gif';
 export const siteTitle = "Praneel's";
 
-const TARGET_UTC = Date.UTC(2026, 7, 22, 11, 30, 0); // 22 Aug 2026, 17:00 IST = 11:30 UTC
+export default function Layout({ children, home, showBackLink = true, compactHeader = false }) {
+  const avatarRef = useRef(null);
 
-function pad2(n) {
-  return String(n).padStart(2, '0');
-}
-
-function getTimeParts() {
-  const now = Date.now();
-  let diff = Math.max(0, TARGET_UTC - now);
-  const dayMs = 24 * 60 * 60 * 1000;
-  const hourMs = 60 * 60 * 1000;
-  const minMs = 60 * 1000;
-  const days = Math.floor(diff / dayMs);
-  diff -= days * dayMs;
-  const hours = Math.floor(diff / hourMs);
-  diff -= hours * hourMs;
-  const minutes = Math.floor(diff / minMs);
-  diff -= minutes * minMs;
-  const seconds = Math.floor(diff / 1000);
-  return { days, hours, minutes, seconds };
-}
-
-export default function Layout({ children, home, showBackLink = true, showCountdownFooter = true, compactHeader = false }) {
-  const [parts, setParts] = useState(getTimeParts());
   useEffect(() => {
-    if (!showCountdownFooter) return;
-    const id = setInterval(() => setParts(getTimeParts()), 1000);
-    return () => clearInterval(id);
-  }, [showCountdownFooter]);
+    if (!home || !avatarRef.current) return;
+
+    const avatar = avatarRef.current;
+
+    const handleMouseMove = (e) => {
+      const rect = avatar.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      const deltaX = (e.clientX - centerX) / rect.width;
+      const deltaY = (e.clientY - centerY) / rect.height;
+      
+      const rotateX = deltaY * 10;
+      const rotateY = deltaX * -10;
+      
+      avatar.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px) scale(1.03)`;
+    };
+
+    const handleMouseLeave = () => {
+      avatar.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px) scale(1)';
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    avatar.addEventListener('mouseleave', handleMouseLeave);
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      avatar.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [home]);
   return (
     <div className={styles.container}>
       <Head>
-        <link rel="icon" href="/favicon.ico?v=20250815" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href={avatarSrc} />
+        <link rel="shortcut icon" href={avatarSrc} />
+        <link rel="apple-touch-icon" href={avatarSrc} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
           name="description"
           content="My personal blog website using Next.js"
@@ -57,32 +64,35 @@ export default function Layout({ children, home, showBackLink = true, showCountd
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <header className={styles.header}>
-        <div style={{ alignSelf: 'flex-end' }}>
-          <ThemeToggle />
-        </div>
         {compactHeader ? null : home ? (
           <>
-            <Image
-              priority
-              src="/images/profile.jpg"
-              className={utilStyles.borderCircle}
-              height={144}
-              width={144}
-              alt={name}
-            />
+            <div ref={avatarRef} className={styles.avatarWrap}>
+              <Image
+                priority
+                src={avatarSrc}
+                className={utilStyles.squareAvatar}
+                height={220}
+                width={220}
+                alt={name}
+                unoptimized
+              />
+            </div>
             <h1 className={utilStyles.heading2Xl}>{name}</h1>
           </>
         ) : (
           <>
             <Link href="/">
-              <Image
-                priority
-                src="/images/profile.jpg"
-                className={utilStyles.borderCircle}
-                height={108}
-                width={108}
-                alt={name}
-              />
+              <div className={styles.avatarWrap}>
+                <Image
+                  priority
+                  src={avatarSrc}
+                  className={utilStyles.squareAvatar}
+                  height={160}
+                  width={160}
+                  alt={name}
+                  unoptimized
+                />
+              </div>
             </Link>
             <h2 className={utilStyles.headingLg}>
               <Link href="/" className={utilStyles.colorInherit}>
@@ -93,26 +103,6 @@ export default function Layout({ children, home, showBackLink = true, showCountd
         )}
       </header>
       <main>{children}</main>
-      {showCountdownFooter && (
-        <div style={{
-          marginTop: '2rem',
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
-          <span
-            aria-label="/countdown"
-            suppressHydrationWarning
-            style={{
-              color: 'var(--text)',
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-              fontWeight: 700,
-              fontSize: '1.25rem'
-            }}
-          >
-            {parts.days}:{pad2(parts.hours)}:{pad2(parts.minutes)}:{pad2(parts.seconds)}
-          </span>
-        </div>
-      )}
       {!home && showBackLink && (
         <div className={styles.backToHome}>
           <Link
