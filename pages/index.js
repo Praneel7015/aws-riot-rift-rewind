@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import Layout, { siteTitle } from '../components/layout';
 import ParticleField from '../components/ParticleField';
 import VisualEffectsOverlay from '../components/VisualEffectsOverlay';
@@ -8,6 +9,7 @@ import utilStyles from '../styles/utils.module.css';
 import modulesStyles from '../styles/modules.module.css';
 import hobbyStyles from '../styles/hobby.module.css';
 import effectsStyles from '../styles/effects.module.css';
+import leagueStyles from '../styles/league.module.css';
 
 const FEATURED_GAMES = [
   { title: 'Hollow Knight', appId: '367520' },
@@ -25,6 +27,72 @@ const FEATURED_GAMES = [
 ];
 
 export default function Home() {
+  const [summonerName, setSummonerName] = useState('');
+  const [region, setRegion] = useState('na1');
+  const [message, setMessage] = useState(null);
+  const [results, setResults] = useState(null);
+  const [isLookingUp, setIsLookingUp] = useState(false);
+
+  const riotFunctionUrl = process.env.NEXT_PUBLIC_RIOT_FUNCTION_URL;
+
+  const showMessage = (text, type = null) => {
+    if (!text) {
+      setMessage(null);
+      return;
+    }
+    setMessage({ text, type });
+  };
+
+  const handleLookup = async (event) => {
+    event.preventDefault();
+
+    const trimmedName = summonerName.trim();
+
+    if (!trimmedName) {
+      showMessage('Please enter a summoner name.', 'error');
+      return;
+    }
+
+    if (!riotFunctionUrl) {
+      showMessage('Lookup service is not configured yet. Add NEXT_PUBLIC_RIOT_FUNCTION_URL to your environment variables.', 'error');
+      return;
+    }
+
+  setIsLookingUp(true);
+  showMessage(null);
+    setResults(null);
+
+    try {
+      const response = await fetch(riotFunctionUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          summonerName: trimmedName,
+          region,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = data?.error || 'Failed to fetch summoner data.';
+        showMessage(errorMessage, 'error');
+        return;
+      }
+
+      setResults(data);
+      showMessage('Summoner found!', 'success');
+    } catch (error) {
+      showMessage('Network error. Please try again.', 'error');
+    } finally {
+      setIsLookingUp(false);
+    }
+  };
+
+  const topChampions = results?.topChampions ?? [];
+
   return (
     <>
       <VisualEffectsOverlay />
@@ -151,6 +219,107 @@ export default function Home() {
               </a>
             ))}
           </div>
+        </section>
+
+        <section className={leagueStyles.leagueLookup}>
+          <h3 className={leagueStyles.title}>League Data Lookup</h3>
+          <p className={leagueStyles.intro}>
+            Enter a summoner name to see their level and top champions!
+          </p>
+
+          {message?.text && (
+            <div
+              className={`${leagueStyles.message} ${message.type ? leagueStyles[message.type] : ''}`}
+              role="status"
+              aria-live="polite"
+            >
+              {message.text}
+            </div>
+          )}
+
+          <form className={leagueStyles.lookupForm} onSubmit={handleLookup}>
+            <div className={leagueStyles.formGroup}>
+              <label htmlFor="summoner-name">Summoner Name</label>
+              <input
+                id="summoner-name"
+                name="summoner-name"
+                type="text"
+                className={leagueStyles.input}
+                placeholder="Enter summoner name"
+                value={summonerName}
+                onChange={(event) => setSummonerName(event.target.value)}
+                required
+              />
+            </div>
+
+            <div className={leagueStyles.formGroup}>
+              <label htmlFor="region">Region</label>
+              <select
+                id="region"
+                name="region"
+                className={leagueStyles.select}
+                value={region}
+                onChange={(event) => setRegion(event.target.value)}
+              >
+                <option value="na1">North America</option>
+                <option value="euw1">Europe West</option>
+                <option value="eun1">Europe Nordic &amp; East</option>
+                <option value="kr">Korea</option>
+                <option value="br1">Brazil</option>
+                <option value="la1">Latin America North</option>
+                <option value="la2">Latin America South</option>
+                <option value="oc1">Oceania</option>
+                <option value="tr1">Turkey</option>
+                <option value="ru">Russia</option>
+                <option value="jp1">Japan</option>
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              id="lookup-btn"
+              className={leagueStyles.submitButton}
+              disabled={isLookingUp}
+            >
+              {isLookingUp ? 'Looking up…' : 'Look Up Summoner'}
+            </button>
+          </form>
+
+          {results && (
+            <div className={leagueStyles.results}>
+              <h4 className={leagueStyles.championsTitle}>Summoner Info</h4>
+              <div className={leagueStyles.summonerCard}>
+                <h5>{results?.summoner?.name ?? 'Unknown Summoner'}</h5>
+                <p>Level: {results?.summoner?.level ?? '—'}</p>
+              </div>
+
+              <div>
+                <h5 className={leagueStyles.championsTitle}>Top Champions</h5>
+                {topChampions.length > 0 ? (
+                  <div className={leagueStyles.championsGrid}>
+                    {topChampions.map((champion) => (
+                      <div key={champion.championId} className={leagueStyles.championCard}>
+                        <p>
+                          <strong>Champion ID:</strong> {champion.championId}
+                        </p>
+                        <p>
+                          <strong>Mastery Level:</strong> {champion.championLevel}
+                        </p>
+                        <p>
+                          <strong>Mastery Points:</strong>{' '}
+                          {typeof champion.championPoints === 'number'
+                            ? champion.championPoints.toLocaleString()
+                            : '—'}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>No champion mastery data found.</p>
+                )}
+              </div>
+            </div>
+          )}
         </section>
       </Layout>
     </>
