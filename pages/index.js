@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Layout, { siteTitle } from '../components/layout';
 import ParticleField from '../components/ParticleField';
 import VisualEffectsOverlay from '../components/VisualEffectsOverlay';
@@ -32,16 +32,33 @@ export default function Home() {
   const [message, setMessage] = useState(null);
   const [results, setResults] = useState(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
-
-  const riotFunctionUrl = process.env.NEXT_PUBLIC_RIOT_FUNCTION_URL;
+  const messageTimeoutRef = useRef(null);
 
   const showMessage = (text, type = null) => {
+    if (messageTimeoutRef.current) {
+      clearTimeout(messageTimeoutRef.current);
+      messageTimeoutRef.current = null;
+    }
+
     if (!text) {
       setMessage(null);
       return;
     }
+
     setMessage({ text, type });
+    messageTimeoutRef.current = setTimeout(() => {
+      setMessage(null);
+      messageTimeoutRef.current = null;
+    }, 10000);
   };
+
+  useEffect(() => {
+    return () => {
+      if (messageTimeoutRef.current) {
+        clearTimeout(messageTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleLookup = async (event) => {
     event.preventDefault();
@@ -49,21 +66,21 @@ export default function Home() {
     const trimmedName = summonerName.trim();
 
     if (!trimmedName) {
-      showMessage('Please enter a summoner name.', 'error');
+      showMessage('Please enter a Riot ID.', 'error');
       return;
     }
 
-    if (!riotFunctionUrl) {
-      showMessage('Lookup service is not configured yet. Add NEXT_PUBLIC_RIOT_FUNCTION_URL to your environment variables.', 'error');
+    if (!trimmedName.includes('#')) {
+      showMessage('Please use Riot ID format: GameName#TAG', 'error');
       return;
     }
 
-  setIsLookingUp(true);
-  showMessage(null);
+    setIsLookingUp(true);
+    showMessage(null);
     setResults(null);
 
     try {
-      const response = await fetch(riotFunctionUrl, {
+      const response = await fetch('/api/league-lookup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +241,7 @@ export default function Home() {
         <section className={leagueStyles.leagueLookup}>
           <h3 className={leagueStyles.title}>League Data Lookup</h3>
           <p className={leagueStyles.intro}>
-            Enter a summoner name to see their level and top champions!
+            Enter a Riot ID to see their level and top champions!
           </p>
 
           {message?.text && (
@@ -239,17 +256,18 @@ export default function Home() {
 
           <form className={leagueStyles.lookupForm} onSubmit={handleLookup}>
             <div className={leagueStyles.formGroup}>
-              <label htmlFor="summoner-name">Summoner Name</label>
+              <label htmlFor="summoner-name">Riot ID</label>
               <input
                 id="summoner-name"
                 name="summoner-name"
                 type="text"
                 className={leagueStyles.input}
-                placeholder="Enter summoner name"
+                placeholder="GameName#TAG (e.g., Hide on bush#KR1)"
                 value={summonerName}
                 onChange={(event) => setSummonerName(event.target.value)}
                 required
               />
+              <small className={leagueStyles.helper}>Format: GameName#TAG</small>
             </div>
 
             <div className={leagueStyles.formGroup}>
