@@ -33,6 +33,7 @@ export default function Home() {
   const [results, setResults] = useState(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
   const messageTimeoutRef = useRef(null);
+  const riotFunctionUrl = process.env.NEXT_PUBLIC_RIOT_FUNCTION_URL;
 
   const showMessage = (text, type = null) => {
     if (messageTimeoutRef.current) {
@@ -75,12 +76,17 @@ export default function Home() {
       return;
     }
 
+    if (!riotFunctionUrl) {
+      showMessage('Lookup service is not configured yet. Add NEXT_PUBLIC_RIOT_FUNCTION_URL to your environment variables.', 'error');
+      return;
+    }
+
     setIsLookingUp(true);
     showMessage(null);
     setResults(null);
 
     try {
-      const response = await fetch('/api/league-lookup', {
+      const response = await fetch(riotFunctionUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -7,7 +7,6 @@ An animated, gaming-themed personal landing page built with the Next.js Pages Ro
 - **Featured game showcase** – Steam header art rendered with `next/image`, ready for quick curation.
 - **Quick navigation hub** – Prominent profile links, social icons, and a dedicated about page.
 - **Static generation by default** – Home (`/`) and About (`/about`) routes pre-rendered on build.
-- **Optional Umami analytics** – Drop in environment variables to enable privacy-friendly tracking.
 
 ## Getting started
 1. **Prerequisites**
@@ -27,6 +26,19 @@ An animated, gaming-themed personal landing page built with the Next.js Pages Ro
    pnpm run dev
    ```
 5. Visit [http://localhost:3000](http://localhost:3000) to explore the site.
+
+### Configure Riot lookup (optional but recommended)
+The League Data Lookup section calls an AWS Lambda function via a Next.js API route. To enable it locally or in deployment:
+
+1. Configure the environment variable `NEXT_PUBLIC_RIOT_FUNCTION_URL` (for example in Amplify’s Environment Variables UI) with your deployed Lambda Function URL:
+   ```bash
+   https://m4gtguqcffj57yqmccz3u5hp2e0mlnjb.lambda-url.eu-north-1.on.aws/
+   ```
+   When running locally, you can create a `.env.local` file with the same key so Next.js picks it up.
+2. Restart the dev server or redeploy so the new value propagates.
+3. Provide a valid Riot ID (e.g. `GameName#TAG`) and select the matching platform region when testing the lookup.
+
+The Lambda returns JSON with the summoner’s level and their top three champion masteries. If the upstream service responds with an error, the UI will surface the provided message.
 
 ### Available scripts
 | Script | Description |
