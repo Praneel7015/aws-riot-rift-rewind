@@ -97,18 +97,40 @@ export default function Home() {
         }),
       });
 
-      const data = await response.json();
+      let rawPayload = '';
+      let data = null;
+
+      try {
+        rawPayload = await response.text();
+        data = rawPayload ? JSON.parse(rawPayload) : null;
+      } catch (parseError) {
+        console.error('Failed to parse lookup response as JSON', parseError);
+      }
 
       if (!response.ok) {
-        const errorMessage = data?.error || 'Failed to fetch summoner data.';
-        showMessage(errorMessage, 'error');
+        const errorDetails =
+          data?.error ||
+          data?.message ||
+          data?.detail ||
+          (typeof data === 'string' ? data : rawPayload) ||
+          `${response.status} ${response.statusText}`;
+
+        showMessage(`Lookup failed: ${errorDetails}`.trim(), 'error');
+        return;
+      }
+
+      if (!data) {
+        showMessage('Lookup succeeded but returned no data.', 'error');
         return;
       }
 
       setResults(data);
       showMessage('Summoner found!', 'success');
     } catch (error) {
-      showMessage('Network error. Please try again.', 'error');
+      const detailedMessage =
+        error instanceof Error ? error.message : typeof error === 'string' ? error : JSON.stringify(error);
+      showMessage(`Lookup error: ${detailedMessage}`, 'error');
+      console.error('League lookup failed', error);
     } finally {
       setIsLookingUp(false);
     }
