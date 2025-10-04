@@ -17,7 +17,7 @@ export default function AboutPage() {
           <title>{`${siteTitle} About Me`}</title>
           <meta
             name="description"
-            content="Learn more about Praneel - a passionate gamer, computer science student, and fitness enthusiast."
+            content="Learn more me! A passionate gamer, computer science student, and fitness freak."
           />
         </Head>
 
@@ -47,7 +47,7 @@ export default function AboutPage() {
               Developer & Gamer
             </h2>
             <p style={{ fontSize: '1.1rem', lineHeight: '1.6', color: 'var(--muted-text)' }}>
-              Hi, I'm <strong style={{ color: 'hsl(var(--accent-hsl))' }}>Praneel</strong> - a computer science student
+              Hi, I'm <strong style={{ color: 'hsl(var(--accent-hsl))' }}>Praneel</strong> ! a computer science student
               passionate about technology, gaming, and building meaningful projects that make a difference.
             </p>
           </div>
@@ -62,7 +62,7 @@ export default function AboutPage() {
               <p style={{ lineHeight: '1.6', marginBottom: '1rem' }}>
                 I'm a <strong>Computer Science and Engineering student</strong> in my third year, with a deep passion for
                 free and open-source technology. My academic focus spans across <strong>IoT and electronics</strong>,
-                <strong>programming for FOSS projects</strong>, and <strong>cybersecurity</strong>.
+                <strong>programming for FOSS projects</strong>, and <strong>Cybersecurity</strong>.
               </p>
               <p style={{ lineHeight: '1.6' }}>
                 Currently leading my college's <strong>FOSS club, Mukti!</strong> where we organize events and seminars
@@ -77,19 +77,17 @@ export default function AboutPage() {
                 Gaming Passion
               </h3>
               <p style={{ lineHeight: '1.6', marginBottom: '1rem' }}>
-                Gaming isn't just a hobby for me - it's a <strong>passion that shapes how I think and problem-solve</strong>.
-                I love exploring virtual worlds, from indie masterpieces like Hollow Knight to competitive titles and
-                story-driven adventures.
+                Gaming isn't just a hobby for me, it's a <strong>passion that shapes how I think and live</strong>.
+                I love exploring virtual worlds, from indie masterpieces like Hollow Knight to story-driven adventures like Portal.
               </p>
               <p style={{ lineHeight: '1.6' }}>
-                Whether I'm speedrunning platformers, strategizing in competitive games, or getting lost in RPG worlds,
+                Whether I'm speedrunning platformers, strategizing in Deck-Builders, or getting lost in RPG worlds,
                 gaming teaches me creativity, persistence, and strategic thinking that I apply to my programming
                 projects.
               </p>
             </div>
           </div>
 
-          {/* Contact Actions */}
           <div
             style={{
               display: 'flex',

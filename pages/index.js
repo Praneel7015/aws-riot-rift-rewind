@@ -120,7 +120,7 @@ export default function Home() {
           <title>{`${siteTitle} - Gaming Hub`}</title>
           <meta
             name="description"
-            content="Welcome to Praneel's gaming world. Explore my favorite games, hobbies, and connect with me across platforms."
+            content="Welcome to Praneel's gaming world. Explore my favorite games, hobbies, and connect with me."
           />
         </Head>
 
@@ -130,7 +130,7 @@ export default function Home() {
           style={{ textAlign: 'center', marginBottom: '2rem' }}
         >
           <p style={{ fontSize: '1.1rem', lineHeight: '1.6', color: 'var(--muted-text)' }}>
-            Passionate gamer and computer science student. Explore my gaming library and connect with me across platforms.
+            Passionate gamer and computer science student. Explore my gaming library and connect with me.
           </p>
         </section>
 
@@ -149,12 +149,10 @@ export default function Home() {
               About Me
             </Link>
             <Link
-              href="https://www.praneel.tech"
-              target="_blank"
-              rel="noreferrer noopener"
+              href="#league-lookup"
               className={`${hobbyStyles.navigationButton} ${effectsStyles.particleTrail}`}
             >
-              Main Site
+              League Lookup
             </Link>
           </div>
 
@@ -179,12 +177,12 @@ export default function Home() {
             </Link>{' '}
             •{' '}
             <Link
-              href="https://www.twitch.tv/praneel_7015"
+              href="https://www.praneel.tech"
               target="_blank"
               rel="noreferrer noopener"
               className={effectsStyles.neonGlow}
             >
-              Twitch
+              Main Site
             </Link>
           </div>
         </section>
@@ -238,7 +236,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className={leagueStyles.leagueLookup}>
+        <section id="league-lookup" className={leagueStyles.leagueLookup}>
           <h3 className={leagueStyles.title}>League Data Lookup</h3>
           <p className={leagueStyles.intro}>
             Enter a Riot ID to see their level and top champions!
