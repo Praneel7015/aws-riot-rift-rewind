@@ -60,8 +60,8 @@ const CHAMPION_NAMES = {
 };
 
 const getMasteryEmoji = (level) => {
-  const emojis = ['', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐', '⭐⭐⭐⭐⭐⭐', '💎'];
-  return emojis[level] || '⭐';
+  const emojis = ['', '1', '2', '3', '4', '5', '6', '7'];
+  return emojis[level] || level;
 };
 
 const getChampionName = (champId) => {
@@ -382,17 +382,23 @@ export default function Home() {
               <div>
                 <h5 className={leagueStyles.championsTitle}>Top Champions</h5>
                 {topChampions.length > 0 ? (
-                  <div className={leagueStyles.championsGrid}>
-                    {topChampions.map((champion) => {
+                  <div className={leagueStyles.championsContainer}>
+                    {topChampions.map((champion, index) => {
                       const lastPlayDate = new Date(champion.lastPlayTime).toLocaleDateString();
                       const progressPercent = Math.min(
                         (champion.championPointsSinceLastLevel / 
                           (champion.championPointsSinceLastLevel + champion.championPointsUntilNextLevel)) * 100,
                         100
                       );
+                      const nextSeasonReqs = champion.nextSeasonMilestone?.requireGradeCounts || {};
+                      const nextSeasonGradeReqs = Object.entries(nextSeasonReqs)
+                        .map(([grade, count]) => `${count}x ${grade}`)
+                        .join(', ');
                       
                       return (
                         <div key={champion.championId} className={leagueStyles.championCard}>
+                          <div className={leagueStyles.cardRank}>#{index + 1}</div>
+                          
                           <div className={leagueStyles.championHeader}>
                             <h6 className={leagueStyles.championName}>
                               {getChampionName(champion.championId)}
@@ -401,11 +407,8 @@ export default function Home() {
                               {getMasteryEmoji(champion.championLevel)}
                             </div>
                           </div>
+
                           <div className={leagueStyles.championStats}>
-                            <div className={leagueStyles.statRow}>
-                              <span className={leagueStyles.statLabel}>Mastery Level:</span>
-                              <span className={leagueStyles.statValue}>{champion.championLevel}</span>
-                            </div>
                             <div className={leagueStyles.statRow}>
                               <span className={leagueStyles.statLabel}>Total Points:</span>
                               <span className={leagueStyles.statValue}>
@@ -416,7 +419,12 @@ export default function Home() {
                               <span className={leagueStyles.statLabel}>Last Played:</span>
                               <span className={leagueStyles.statValue}>{lastPlayDate}</span>
                             </div>
+                            <div className={leagueStyles.statRow}>
+                              <span className={leagueStyles.statLabel}>Tokens Earned:</span>
+                              <span className={leagueStyles.statValue}>{champion.tokensEarned}</span>
+                            </div>
                           </div>
+
                           <div className={leagueStyles.progressSection}>
                             <div className={leagueStyles.progressLabel}>
                               <span className={leagueStyles.progressText}>Progress to Next Level</span>
@@ -431,6 +439,39 @@ export default function Home() {
                               />
                             </div>
                           </div>
+
+                          <div className={leagueStyles.milestoneSection}>
+                            <div className={leagueStyles.milestoneLabel}>
+                              <span>Season Milestone:</span>
+                              <span className={leagueStyles.milestoneValue}>
+                                {champion.championSeasonMilestone}
+                              </span>
+                            </div>
+                          </div>
+
+                          {nextSeasonReqs && Object.keys(nextSeasonReqs).length > 0 && (
+                            <div className={leagueStyles.nextSeasonSection}>
+                              <div className={leagueStyles.nextSeasonLabel}>Next Season Requirements:</div>
+                              <div className={leagueStyles.nextSeasonReqs}>
+                                <div className={leagueStyles.reqItem}>
+                                  <span className={leagueStyles.reqLabel}>Grades:</span>
+                                  <span className={leagueStyles.reqValue}>{nextSeasonGradeReqs || 'None'}</span>
+                                </div>
+                                <div className={leagueStyles.reqItem}>
+                                  <span className={leagueStyles.reqLabel}>Games:</span>
+                                  <span className={leagueStyles.reqValue}>
+                                    {champion.nextSeasonMilestone?.totalGamesRequires || 0}
+                                  </span>
+                                </div>
+                                <div className={leagueStyles.reqItem}>
+                                  <span className={leagueStyles.reqLabel}>Reward Marks:</span>
+                                  <span className={leagueStyles.reqValue}>
+                                    {champion.nextSeasonMilestone?.rewardMarks || 0}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
