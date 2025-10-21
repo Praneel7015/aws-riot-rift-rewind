@@ -26,6 +26,48 @@ const FEATURED_GAMES = [
   { title: 'Half-Life 2', appId: '220' },
 ];
 
+// Champion ID to Name mapping (common champions)
+const CHAMPION_NAMES = {
+  1: 'Annie', 2: 'Olaf', 3: 'Galio', 4: 'Twisted Fate', 5: 'Xin Zhao',
+  6: 'Urgot', 7: 'LeBlanc', 8: 'Vladimir', 9: 'Fiddlesticks', 10: 'Kayle',
+  11: 'Master Yi', 12: 'Alistar', 13: 'Ryze', 14: 'Sion', 15: 'Sivir',
+  16: 'Soraka', 17: 'Teemo', 18: 'Ashe', 19: 'Leona', 20: 'Sejuani',
+  21: 'Karthus', 22: 'Ashe', 23: 'Tryndamere', 24: 'Jax', 25: 'Morgana',
+  26: 'Zilean', 27: 'Singed', 28: 'Rammus', 29: 'Twitch', 30: 'Karthus',
+  31: 'Cho\'Gath', 32: 'Amumu', 33: 'Rammus', 34: 'Anivia', 35: 'Shaco',
+  36: 'Dr. Mundo', 37: 'Sona', 38: 'Kassadin', 39: 'Irelia', 40: 'Janna',
+  41: 'Gangplank', 42: 'Corki', 43: 'Karma', 44: 'Taric', 45: 'Veigar',
+  48: 'Trundle', 50: 'Swain', 51: 'Caitlyn', 53: 'Blitzcrank', 54: 'Malphite',
+  55: 'Katarina', 56: 'Nocturne', 57: 'Maokai', 58: 'Renekton', 59: 'Jarvan IV',
+  60: 'Elise', 61: 'Orianna', 62: 'Wukong', 63: 'Brand', 64: 'Lee Sin',
+  67: 'Vayne', 68: 'Rumble', 69: 'Cassiopeia', 72: 'Skarner', 74: 'Heimerdinger',
+  75: 'Nasus', 76: 'Nidalee', 77: 'Udyr', 78: 'Poppy', 79: 'Gragas',
+  80: 'Pantheon', 81: 'Ezreal', 82: 'Mordekaiser', 83: 'Yorick', 84: 'Akali',
+  85: 'Kennen', 86: 'Garen', 89: 'Leona', 90: 'Talon', 91: 'Talon', 92: 'Riven',
+  96: 'Kog\'Maw', 98: 'Shen', 99: 'Lux', 101: 'Xerath', 102: 'Shyvana',
+  103: 'Ahri', 104: 'Graves', 105: 'Fizz', 106: 'Volibear', 107: 'Rengar',
+  110: 'Varus', 111: 'Nautilus', 112: 'Viktor', 113: 'Sejuani', 114: 'Fiora',
+  115: 'Ziggs', 117: 'Lulu', 119: 'Draven', 120: 'Hecarim', 121: 'Kha\'Zix',
+  122: 'Darius', 126: 'Jayce', 127: 'Lissandra', 131: 'Diana', 133: 'Quinn',
+  134: 'Syndra', 136: 'Aurelion Sol', 141: 'Kayn', 142: 'Zoe', 143: 'Zyra',
+  145: 'Kai\'Sa', 147: 'Seraphine', 150: 'Gnar', 154: 'Zac', 157: 'Yasuo',
+  161: 'Vel\'Koz', 163: 'Taliyah', 164: 'Camille', 166: 'Yuumi', 168: 'Pyke',
+  69: 'Cassiopeia', 222: 'Jinx', 223: 'Tahm Kench', 224: 'Braum', 225: 'Ekko',
+  226: 'Illaoi', 230: 'Rek\'Sai', 235: 'Senna', 236: 'Lucian', 238: 'Zed',
+  240: 'Kled', 246: 'Qiyana', 247: 'Akshan', 248: 'Thresh', 266: 'Aatrox',
+  267: 'Nami', 268: 'Azir', 350: 'Yuumi', 360: 'Samira', 412: 'Thresh',
+  516: 'Ornn', 517: 'Sylas', 518: 'Neeko', 519: 'Leona', 520: 'Okiara',
+};
+
+const getMasteryEmoji = (level) => {
+  const emojis = ['', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐', '⭐⭐⭐⭐⭐⭐', '💎'];
+  return emojis[level] || '⭐';
+};
+
+const getChampionName = (champId) => {
+  return CHAMPION_NAMES[champId] || `Champion ${champId}`;
+};
+
 export default function Home() {
   const [summonerName, setSummonerName] = useState('');
   const [region, setRegion] = useState('na1');
@@ -341,22 +383,57 @@ export default function Home() {
                 <h5 className={leagueStyles.championsTitle}>Top Champions</h5>
                 {topChampions.length > 0 ? (
                   <div className={leagueStyles.championsGrid}>
-                    {topChampions.map((champion) => (
-                      <div key={champion.championId} className={leagueStyles.championCard}>
-                        <p>
-                          <strong>Champion ID:</strong> {champion.championId}
-                        </p>
-                        <p>
-                          <strong>Mastery Level:</strong> {champion.championLevel}
-                        </p>
-                        <p>
-                          <strong>Mastery Points:</strong>{' '}
-                          {typeof champion.championPoints === 'number'
-                            ? champion.championPoints.toLocaleString()
-                            : '—'}
-                        </p>
-                      </div>
-                    ))}
+                    {topChampions.map((champion) => {
+                      const lastPlayDate = new Date(champion.lastPlayTime).toLocaleDateString();
+                      const progressPercent = Math.min(
+                        (champion.championPointsSinceLastLevel / 
+                          (champion.championPointsSinceLastLevel + champion.championPointsUntilNextLevel)) * 100,
+                        100
+                      );
+                      
+                      return (
+                        <div key={champion.championId} className={leagueStyles.championCard}>
+                          <div className={leagueStyles.championHeader}>
+                            <h6 className={leagueStyles.championName}>
+                              {getChampionName(champion.championId)}
+                            </h6>
+                            <div className={leagueStyles.masteryBadge}>
+                              {getMasteryEmoji(champion.championLevel)}
+                            </div>
+                          </div>
+                          <div className={leagueStyles.championStats}>
+                            <div className={leagueStyles.statRow}>
+                              <span className={leagueStyles.statLabel}>Mastery Level:</span>
+                              <span className={leagueStyles.statValue}>{champion.championLevel}</span>
+                            </div>
+                            <div className={leagueStyles.statRow}>
+                              <span className={leagueStyles.statLabel}>Total Points:</span>
+                              <span className={leagueStyles.statValue}>
+                                {champion.championPoints.toLocaleString()}
+                              </span>
+                            </div>
+                            <div className={leagueStyles.statRow}>
+                              <span className={leagueStyles.statLabel}>Last Played:</span>
+                              <span className={leagueStyles.statValue}>{lastPlayDate}</span>
+                            </div>
+                          </div>
+                          <div className={leagueStyles.progressSection}>
+                            <div className={leagueStyles.progressLabel}>
+                              <span className={leagueStyles.progressText}>Progress to Next Level</span>
+                              <span className={leagueStyles.progressPoints}>
+                                {champion.championPointsSinceLastLevel} / {champion.championPointsSinceLastLevel + champion.championPointsUntilNextLevel}
+                              </span>
+                            </div>
+                            <div className={leagueStyles.progressBar}>
+                              <div 
+                                className={leagueStyles.progressFill}
+                                style={{ width: `${progressPercent}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <p>No champion mastery data found.</p>
